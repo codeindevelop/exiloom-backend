@@ -87,8 +87,8 @@ class RegisterController extends Controller
                 ->withProperties(['user_id' => $user->id, 'ip' => $request->getClientIp()])
                 ->log('Signup user');
 
-            // Assign Registered User Role
-            $user->assignRole('user');
+            // Assign Registered registered-user Role
+            $user->assignRole('registered-user');
 
             // Create Access Token For user After Register
             $tokenResult = $user->createToken('accessToken');
@@ -110,95 +110,6 @@ class RegisterController extends Controller
         }
     }
 
-    // Register User in system
-    public function register(Request $request): JsonResponse
-    {
-        // check can register users from auth settings - if can not !
-        if (DB::table('auth_settings')->where('id', 1)->value('can_register') != 1) {
-            return response()->json(['message' => 'Register Has ben disabled by admin.'], 200);
-
-            // If users can be register
-        } else {
-
-            // Check auth setting for register type - full
-            if (DB::table('auth_settings')->where('id', 1)->value('register_type') == 'full') {
-
-                // Validate Requested fields
-                $validator = Validator::make($request->all(), [
-
-                    'first_name' => ['required', 'string'],
-                    'last_name' => ['required', 'string'],
-                    'mobile_number' => ['required', 'string', 'unique:users'],
-                    'email' => ['required', 'email', 'max:255', 'unique:users'],
-                    'password' => ['required', 'confirmed'],
-                ]);
-
-                // Create user with Requests
-                $user = new User([
-
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'mobile_number' => $request->mobile_number,
-                    'email' => $request->email,
-                    'password' => bcrypt($request->password),
-                    'activation_token' => Str::random(60),
-                    'mobile_token' => "",
-                    'register_ip' => $request->ip()
-                ]);
-
-
-                // Check auth setting for register type - Email
-            } elseif (DB::table('auth_settings')->where('id', 1)->value('register_type') == 'email') {
-
-                // Validate Requested fields
-                $validator = Validator::make($request->all(), [
-
-                    'email' => ['required', 'email', 'max:255', 'unique:users'],
-                    'password' => ['required', 'confirmed', 'min:8'],
-                ]);
-
-                // Create user with Requests
-                $user = new User([
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'email' => $request->email,
-                    'password' => bcrypt($request->password),
-                    'activation_token' => Str::random(60),
-                    'register_ip' => $request->ip()
-                ]);
-
-                // Check auth setting for register type - Mobile
-            }
-
-            // Check Validator Error
-            if ($validator->fails()) {
-                return response()->json([
-                    'err' => $validator->errors()->first()
-                ], 400);
-
-                // If Validator Has No Error
-            } else {
-
-                // Save User Data
-                $user->save();
-
-
-                // Dispatch User Process job for create some tables for user
-                ProcessUserRegister::dispatchAfterResponse($user);
-
-                // set log for user
-                activity()
-                    ->withProperties(['user_id' => $user->id, 'ip' => $request->getClientIp()])
-                    ->log('Signup user');
-
-                // Assign Registered User Role
-                $user->assignRole('user');
-
-
-                return response()->json(['message' => 'User has ben registered successful'], 201);
-            }
-        }
-    }
 
 
     // Active user after click on email activation
