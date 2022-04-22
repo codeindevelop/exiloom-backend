@@ -13,20 +13,19 @@ after for install Requirements you most be run DataBase Services by type `docker
 
 after that you can access to DataBase with environment by create `.evn` file on `.env.example` file .
 
-## Installing PHP 8.0 with Nginx
-
+## Installing PHP 8.0 with Nginx For Use Docker
 <br>
 Nginx does’t have built-in support for processing PHP files. We’ll use PHP-FPM (“fastCGI process manager”) to handle the PHP files.
 
 Run the following commands to install PHP and PHP FPM packages:
 <br>
 <br>
-
 ```
 sudo apt update
+sudo add-apt-repository ppa:ondrej/php 
 sudo apt install php8.0-fpm
+sudo apt install openssl php-common php-curl php-json php-mbstring php-mysql php-xml php-zip
 ```
-
 Once the installation is completed, the FPM service will start automatically. To check the status of the service, run
 <br>
 <br>
@@ -282,7 +281,7 @@ server {
     location / {
         proxy_set_header   X-Forwarded-For $remote_addr;
         proxy_set_header   Host $http_host;
-        proxy_pass         "http://SERVER_IP:${PMA_PORT}";
+        proxy_pass         "http://SERVER_IP:8080";
     }
 
 

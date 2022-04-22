@@ -1,0 +1,65 @@
+version: "3.8"
+
+# Network
+networks:
+    dbnetwork:
+        driver: bridge
+
+# Volumes
+volumes:
+    exiloom-mysql-data:
+        driver: local
+    pmadata:
+        driver: local
+
+# Serivces
+services:
+    mysql:
+        image: "mysql:8"
+        container_name: "${MYSQL_CONTAINER_NAME}"
+        restart: "${MYSQL_RESTART}"
+        tty: true
+        ports:
+            - "${DB_PORT}:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD}"
+            MYSQL_USER: "${DB_USERNAME}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: "${MYSQL_ALLOW_EMPTY_PASSWORD}"
+            MYSQL_DATABASE: "${DB_DATABASE}"
+        volumes:
+            - "exiloom-mysql-data:/var/lib/mysql/"
+        networks:
+            - dbnetwork
+
+    phpmyadmin:
+        image: "${PMA_IMAGE}"
+        container_name: "${PMA_CONTAINER_NAME}"
+        environment:
+            PMA_PMADB: 1
+            PMA_ARBITRARY: 1
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD}"
+            # PMA_HOST: "${PMA_HOST}"
+            # PMA_PORT: "${DB_PORT}"
+        restart: "${PMA_RESTART}"
+        depends_on:
+            - mysql
+            # - activity-mysql
+        ports:
+            - "${PMA_PORT}:80"
+        volumes:
+            - "pmadata:/etc/phpmyadmin/config.user.inc.php"
+        networks:
+            - dbnetwork
+        links:
+            - mysql
+            # - activity-mysql
+
+    redis:
+        image: "${REDIS_IMAGE}"
+        container_name: "${REDIS_CONTAINER_NAME}"
+        restart: "${REDIS_RESTART}"
+        ports:
+            - "${REDIS_PORT}:6379"
+        networks:
+            - dbnetwork
