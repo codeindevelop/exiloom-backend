@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\auth;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\Auth\ProcessOtpUserRegister;
 use App\Jobs\Auth\ProcessUserRegister;
 use App\Models\User;
 use Carbon\Carbon;
@@ -78,11 +77,11 @@ class OtpAuthController extends Controller
 
                 // Send 6 Digit Code for user
                 $client->post(
-                    'http://rest.ippanel.com/v1/messages/patterns/send',
+                    'https://rest.ippanel.com/v1/messages/patterns/send',
                     ['body' => json_encode(
                         [
-                            'pattern_code' => "",
-                            'originator' => "+98",
+                            'pattern_code' => "tzek0t2aru",
+                            'originator' => "+983000505",
                             'recipient' => $request->mobile_number,
                             'values' => $patternValues,
                         ]
@@ -128,11 +127,11 @@ class OtpAuthController extends Controller
 
                 // Begin Post sms
                 $client->post(
-                    'http://rest.ippanel.com/v1/messages/patterns/send',
+                    'https://rest.ippanel.com/v1/messages/patterns/send',
                     ['body' => json_encode(
                         [
-                            'pattern_code' => "",
-                            'originator' => "+98",
+                            'pattern_code' => "tzek0t2aru",
+                            'originator' => "+983000505",
                             'recipient' => $request->mobile_number,
                             'values' => $patternValues,
                         ]
@@ -171,7 +170,7 @@ class OtpAuthController extends Controller
                 $user->assignRole('registered-user');
 
                 // Dispatch User Register Requirments
-                ProcessOtpUserRegister::dispatch($user);
+                ProcessUserRegister::dispatch($user);
 
                 // set log for user
                 activity()

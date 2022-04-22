@@ -64,9 +64,36 @@ class ProcessUserRegister implements ShouldQueue
         $user->personalInfos()->save($personalUserInfo);
 
 
+        // Start Send Welcome SMS to user
+
+
+        $apikey = env('SMS_API_KEY');
+        $client = new \GuzzleHttp\Client([
+            'headers' => ['Content-Type' => 'application/json', 'Authorization' => "AccessKey {$apikey}"]
+        ]);
+
+        // Values to send
+        $patternValues = [
+            "name" => $user->first_name,
+            "mobile" => $user->mobile_number,
+        ];
+
+
+        // Begin Post sms
+        $client->post(
+            'https://rest.ippanel.com/v1/messages/patterns/send',
+            ['body' => json_encode(
+                [
+                    'pattern_code' => "pupiq1iq22",
+                    'originator' => "+983000505",
+                    'recipient' => $user->mobile_number,
+                    'values' => $patternValues,
+                ]
+            )]
+        );
 
 
         // Try Send Mail to User
-        Mail::to($user->email)->send(new UserSignup($user));
+        // Mail::to($user->email)->send(new UserSignup($user));
     }
 }
