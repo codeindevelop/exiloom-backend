@@ -14,18 +14,22 @@ after for install Requirements you most be run DataBase Services by type `docker
 after that you can access to DataBase with environment by create `.evn` file on `.env.example` file .
 
 ## Installing PHP 8.0 with Nginx For Use Docker
+
 <br>
 Nginx does’t have built-in support for processing PHP files. We’ll use PHP-FPM (“fastCGI process manager”) to handle the PHP files.
 
 Run the following commands to install PHP and PHP FPM packages:
 <br>
 <br>
+
 ```
 sudo apt update
-sudo add-apt-repository ppa:ondrej/php 
+sudo add-apt-repository ppa:ondrej/php
 sudo apt install php8.0-fpm
+sudo apt-get install php8.0-pdo-mysql
 sudo apt install openssl php-common php-curl php-json php-mbstring php-mysql php-xml php-zip
 ```
+
 Once the installation is completed, the FPM service will start automatically. To check the status of the service, run
 <br>
 <br>
@@ -111,7 +115,7 @@ First, copy the contents of the Origin Certificate displayed in the dialog box i
 Then, on your server, open `/etc/ssl/certs/cert.pem` for editing:
 
 ```sh
-sudo nano /etc/ssl/certs/cert.pem
+sudo nano /etc/ssl/certs/exiloomcert.pem
 ```
 
 Paste the certificate contents into the file. Then save and exit the editor.
@@ -119,7 +123,7 @@ Paste the certificate contents into the file. Then save and exit the editor.
 Then return to your browser and copy the contents of the Private key. Open the file /etc/ssl/private/key.pem for editing:
 
 ```sh
-sudo nano /etc/ssl/private/key.pem
+sudo nano /etc/ssl/private/exiloomkey.pem
 ```
 
 Paste the key into the file, save the file, and exit the editor.
@@ -161,8 +165,8 @@ server {
     listen [::]:443 ssl http2;
 
 
-    ssl_certificate         /etc/ssl/certs/cert.pem;
-    ssl_certificate_key     /etc/ssl/private/key.pem;
+    ssl_certificate         /etc/ssl/certs/exiloomcert.pem;
+    ssl_certificate_key     /etc/ssl/private/exiloomkey.pem;
 
     server_name api.exiloom.com www.api.exiloom.com;
 
@@ -196,6 +200,12 @@ server {
 ```
 
 Save the file and exit the editor.
+
+after that you most be link site avalible with site enable
+
+```
+sudo ln -s /etc/nginx/sites-available/api.exiloom.com /etc/nginx/sites-enabled/
+```
 
 Next, test to make sure that there are no syntax errors in any of your Nginx configuration files:
 
@@ -272,8 +282,8 @@ server {
     listen [::]:443 ssl http2;
 
 
-    ssl_certificate         /etc/ssl/certs/cert.pem;
-    ssl_certificate_key     /etc/ssl/private/key.pem;
+    ssl_certificate         /etc/ssl/certs/exiloomcert.pem;
+    ssl_certificate_key     /etc/ssl/private/exiloomkey.pem;
 
     server_name pma.exiloom.com www.pma.exiloom.com;
 
@@ -283,6 +293,7 @@ server {
         proxy_set_header   Host $http_host;
         proxy_pass         "http://SERVER_IP:8080";
     }
+}
 
 
 ```
