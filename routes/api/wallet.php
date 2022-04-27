@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\Wallet\WalletController;
+use App\Http\Controllers\Wallet\WalletController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 
