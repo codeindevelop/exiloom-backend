@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('activation_token')->nullable();
             $table->string('mobile_token')->nullable();
+            $table->string('profile_pic')->nullable();
             $table->string('register_ip')->nullable();
             $table->boolean('active')->default(false);
             $table->rememberToken();
