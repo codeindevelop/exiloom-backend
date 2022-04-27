@@ -5,6 +5,7 @@ namespace App\Jobs\Auth;
 use App\Mail\Signup\UserSignup;
 use App\Models\PersonalUserInfo;
 use App\Models\User;
+use App\Models\Wallet\Wallet;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -62,6 +63,28 @@ class ProcessUserRegister implements ShouldQueue
 
         // Save User Personal Info
         $user->personalInfos()->save($personalUserInfo);
+
+
+        $wallet = new Wallet([
+            'profit_balance' => 0,
+            'investment_balance' => 0,
+            'irt_balance' => 150000,
+            'avalible_irt_balance' => 0,
+            'usd_balance' => 0,
+            'cad_balance' => 0,
+            'pound_balance' => 0,
+            'btc_balance' => 0,
+            'usdt_balance' => 0,
+            'eth_balance' => 0,
+            'bch_balance' => 0,
+            'dash_balance' => 0,
+            'ltc_balance' => 0,
+            'imc_balance' => 0,
+            'usdterc20_balance' => 0,
+        ]);
+
+        //save User Wallet
+        $user->wallet()->save($wallet);
 
 
         // Start Send Welcome SMS to user

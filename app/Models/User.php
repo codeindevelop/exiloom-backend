@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Wallet\Wallet;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -71,6 +72,13 @@ class User extends Authenticatable
     public function userMobileVerified()
     {
         return !is_null($this->mobile_verified_at);
+    }
+
+
+    // Get user wallet information
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
     }
 
 
